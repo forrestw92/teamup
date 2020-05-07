@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { UserRepository } from './user.repository';
 
 @Module({
     imports: [
@@ -15,7 +15,7 @@ import { JwtModule } from '@nestjs/jwt';
                 expiresIn: 3600,
             },
         }),
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([UserRepository]),
     ],
     providers: [UserResolver, UserService],
 })
