@@ -1,9 +1,7 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsEmail, Matches, MaxLength, MinLength } from 'class-validator';
-import { Match } from '../decorators/match.decorator';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class CreateUserInput {
+@ObjectType('User')
+export class UserType {
     @Field()
     id: string;
 
