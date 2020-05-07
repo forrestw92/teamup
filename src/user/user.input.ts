@@ -34,6 +34,8 @@ export class CreateUserInput {
     @Field()
     @MinLength(8)
     @MaxLength(50)
-    @Match('password', { message: 'Passwords must match' })
+    @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+        message: 'Password to weak',
+    })
     confirmPassword: string;
 }
