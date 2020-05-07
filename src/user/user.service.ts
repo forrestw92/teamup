@@ -4,6 +4,8 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { CreateUserInput } from './user.input';
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class UserService {
     constructor(
@@ -20,17 +22,22 @@ export class UserService {
             lastName,
             username,
         } = createUserInput;
-        const nowISO = new Date().toISOString();
         if (password !== confirmPassword) {
             throw new BadRequestException('Passwords do not match');
         }
+
+        const salt = await bcrypt.genSalt();
+        const nowISO = new Date().toISOString();
+        const hashedPassword = await this.hashPassword(password, salt);
+
         const user = await this.userRepository.create({
             id: uuid(),
-            password,
+            password: hashedPassword,
             email,
             firstName,
             lastName,
             username,
+            salt,
             createdAt: nowISO,
             updatedAt: nowISO,
         });
@@ -38,5 +45,12 @@ export class UserService {
     }
     async getUserById(userId: string) {
         return this.userRepository.findOne({ id: userId });
+    }
+
+    private async hashPassword(
+        password: string,
+        salt: string,
+    ): Promise<string> {
+        return await bcrypt.hash(password, salt);
     }
 }
