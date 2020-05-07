@@ -16,4 +16,9 @@ export class TeamResolver {
     team(@Args('teamId') teamId: string) {
         return this.teamService.getTeamById(teamId);
     }
+
+    @Query(type => [TeamType])
+    teams() {
+        return this.teamService.getAllTeams();
+    }
 }

@@ -22,6 +22,9 @@ export class TeamService {
         return this.teamRepository.save(team);
     }
 
+    async getAllTeams(): Promise<Team[]> {
+        return this.teamRepository.find();
+    }
     async getTeamById(teamId: string): Promise<Team> {
         return this.teamRepository.findOne({ id: teamId });
     }
