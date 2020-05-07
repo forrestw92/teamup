@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Team } from './team/team.entity';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
+import { User } from './user/user.entity';
 
 @Module({
     imports: [
@@ -12,7 +13,7 @@ import { UserModule } from './user/user.module';
             url: 'mongodb://localhost/teamup',
             useUnifiedTopology: true,
             synchronize: true,
-            entities: [Team],
+            entities: [Team, User],
         }),
         GraphQLModule.forRoot({
             autoSchemaFile: true,
