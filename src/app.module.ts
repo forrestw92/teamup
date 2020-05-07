@@ -3,6 +3,7 @@ import { TeamModule } from './team/team.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Team } from './team/team.entity';
 import { GraphQLModule } from '@nestjs/graphql';
+import { UserModule } from './user/user.module';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { GraphQLModule } from '@nestjs/graphql';
             autoSchemaFile: true,
         }),
         TeamModule,
+        UserModule,
     ],
 })
 export class AppModule {}
