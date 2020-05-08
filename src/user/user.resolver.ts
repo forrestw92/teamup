@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { UserType } from './user.type';
 import { CreateUserInput } from './user.input';
 import { UserLoginInput } from './user-login.input';
-import { AccessTokenType } from './access-token.type';
+import { AccessTokenType } from '../auth/access-token.type';
 
 @Resolver('User')
 export class UserResolver {

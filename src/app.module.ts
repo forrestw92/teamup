@@ -5,6 +5,7 @@ import { Team } from './team/team.entity';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { User } from './user/user.entity';
         }),
         TeamModule,
         UserModule,
+        AuthModule,
     ],
 })
 export class AppModule {}

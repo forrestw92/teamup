@@ -8,8 +8,9 @@ import { User } from './user.entity';
 import { CreateUserInput } from './user.input';
 import { UserRepository } from './user.repository';
 import { UserLoginInput } from './user-login.input';
-import { JwtPayload } from './jwt.payload';
+import { JwtPayload } from '../auth/jwt.payload';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
@@ -17,7 +18,7 @@ export class UserService {
         @InjectRepository(UserRepository)
         private readonly userRepository: UserRepository,
 
-        private readonly jwtService: JwtService,
+        private readonly authService: AuthService,
     ) {}
 
     async createUser(createUserInput: CreateUserInput): Promise<User> {
@@ -33,14 +34,9 @@ export class UserService {
         if (!user || !user.username) {
             throw new UnauthorizedException('Invalid credentials');
         }
-        return this.createAccessToken(user);
+        return this.authService.createAccessToken(user);
     }
-    async createAccessToken(user: User): Promise<{ accessToken: string }> {
-        const { username } = user;
-        const payload: JwtPayload = { username };
-        const accessToken = await this.jwtService.sign(payload);
-        return { accessToken };
-    }
+
     async getUserById(userId: string) {
         return this.userRepository.findOne({ id: userId });
     }
