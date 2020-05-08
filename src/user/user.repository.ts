@@ -4,9 +4,20 @@ import { CreateUserInput } from './user.input';
 import { BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
+import { UserLoginInput } from './user-login.input';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+    async validatePassword(userLoginInput: UserLoginInput): Promise<User> {
+        const { username, password } = userLoginInput;
+        const user: User = await this.findOne({ username });
+        if (user && (await user.validatePassword(password))) {
+            return user;
+        } else {
+            return null;
+        }
+    }
+
     async createUser(createUserInput: CreateUserInput): Promise<User> {
         const {
             password,
