@@ -13,7 +13,7 @@ export class TeamService {
     async createTeam(createTeamInput: CreateTeamInput, user): Promise<Team> {
         const { name } = createTeamInput;
         const nowISO = new Date().toISOString();
-        const hasOwnedTeam = await this.getTeamById(user.id);
+        const hasOwnedTeam = await this.getTeamByOwnerId(user.id);
         if (hasOwnedTeam) {
             throw new BadRequestException('Can only own one team.');
         }
@@ -36,9 +36,7 @@ export class TeamService {
 
     async getTeamByOwnerId(ownerId: string): Promise<Team> {
         return this.teamRepository.findOne({
-            where: {
-                ownerId,
-            },
+            owner: ownerId,
         });
     }
 }
