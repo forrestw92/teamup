@@ -66,9 +66,32 @@ export class TeamService {
         }
         return { teamId };
     }
+
+    async removeMember(memberId: string, user: User): Promise<Team> {
+        const team = await this.teamRepository.findOne({
+            where: {
+                owner: user.id,
+            },
+        });
+
+        if (!team) {
+            throw new BadRequestException('User is not owner of team');
+        }
+
+        if (team.members.indexOf(memberId) === -1) {
+            throw new BadRequestException(
+                `Member "${memberId}" is not in team`,
+            );
+        }
+
+        team.members = team.members.filter(id => id !== memberId);
+        return this.teamRepository.save(team);
+    }
+
     async getAllTeams(): Promise<Team[]> {
         return this.teamRepository.find();
     }
+
     async getTeamById(teamId: string): Promise<Team> {
         const team = await this.teamRepository.findOne({ id: teamId });
         if (!team) {

@@ -48,6 +48,11 @@ export class TeamResolver {
         return this.teamService.deleteTeam(teamId, user);
     }
 
+    @Mutation(type => TeamType)
+    removeMember(@Args('memberId') memberId: string, @GetUser() user: User) {
+        return this.teamService.removeMember(memberId, user);
+    }
+
     @Query(type => TeamType)
     team(@Args('teamId') teamId: string) {
         return this.teamService.getTeamById(teamId);
