@@ -1,6 +1,5 @@
 import {
     BadRequestException,
-    CanActivate,
     ExecutionContext,
     Injectable,
     UnauthorizedException,
