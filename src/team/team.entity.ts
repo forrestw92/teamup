@@ -1,4 +1,6 @@
 import { Column, Entity, ObjectIdColumn, PrimaryColumn } from 'typeorm';
+import { ID } from '@nestjs/graphql';
+import { UserType } from '../user/user.type';
 
 @Entity('Team')
 export class Team {
@@ -10,6 +12,9 @@ export class Team {
 
     @Column()
     name: string;
+
+    @Column()
+    owner: string;
 
     @Column()
     createdAt: string;

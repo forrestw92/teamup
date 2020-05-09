@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './team.entity';
 import { Repository } from 'typeorm';
@@ -10,12 +10,17 @@ export class TeamService {
         @InjectRepository(Team)
         private readonly teamRepository: Repository<Team>,
     ) {}
-    async createTeam(createTeamInput: CreateTeamInput): Promise<Team> {
+    async createTeam(createTeamInput: CreateTeamInput, user): Promise<Team> {
         const { name } = createTeamInput;
         const nowISO = new Date().toISOString();
+        const hasOwnedTeam = await this.getTeamById(user.id);
+        if (hasOwnedTeam) {
+            throw new BadRequestException('Can only own one team.');
+        }
         const team = await this.teamRepository.create({
             id: uuid(),
             name,
+            owner: user.id,
             createdAt: nowISO,
             updatedAt: nowISO,
         });
@@ -27,5 +32,13 @@ export class TeamService {
     }
     async getTeamById(teamId: string): Promise<Team> {
         return this.teamRepository.findOne({ id: teamId });
+    }
+
+    async getTeamByOwnerId(ownerId: string): Promise<Team> {
+        return this.teamRepository.findOne({
+            where: {
+                ownerId,
+            },
+        });
     }
 }
