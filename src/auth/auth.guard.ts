@@ -7,12 +7,18 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-//https://github.com/nestjs/graphql/issues/48#issuecomment-567963946
-export class JwtAuthGuard implements CanActivate {
-    constructor(private readonly jwtService: AuthService) {}
-
+export class JwtAuthGuard extends AuthGuard('jwt') {
+    constructor(private readonly jwtService: AuthService) {
+        super();
+    }
+    getRequest(context: ExecutionContext) {
+        const ctx = GqlExecutionContext.create(context);
+        return ctx.getContext().req;
+    }
+    //https://github.com/nestjs/graphql/issues/48#issuecomment-567963946
     canActivate(context: ExecutionContext) {
         const authHeader = GqlExecutionContext.create(context)
             .getContext()
@@ -20,6 +26,7 @@ export class JwtAuthGuard implements CanActivate {
         if (!authHeader) {
             throw new BadRequestException('Authorization header not found.');
         }
+
         const [type, token] = authHeader.split(' ');
         if (type !== 'Bearer') {
             throw new BadRequestException(
@@ -27,9 +34,11 @@ export class JwtAuthGuard implements CanActivate {
             );
         }
         const validationResult = this.jwtService.validateAccessToken(token);
+
         if (validationResult === true) {
-            return true;
+            return super.canActivate(context);
         }
+
         throw new UnauthorizedException(validationResult);
     }
 }
