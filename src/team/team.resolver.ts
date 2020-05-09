@@ -15,7 +15,7 @@ import { GetUser } from '../user/get-user.decorator';
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { Team } from './team.entity';
-import { TeamOwnerType } from './team-owner.type';
+import { TeamMemberType } from './team-member.type';
 
 @Resolver(of => TeamType)
 @UseGuards(JwtAuthGuard)
@@ -44,10 +44,12 @@ export class TeamResolver {
     }
 
     @ResolveField()
-    async owner(@Parent() team: Team): Promise<TeamOwnerType> {
-        const { firstName, lastName } = await this.userService.getUserById(
-            team.owner,
-        );
-        return { firstName, lastName };
+    async owner(@Parent() team: Team): Promise<TeamMemberType> {
+        const {
+            firstName,
+            lastName,
+            username,
+        } = await this.userService.getUserById(team.owner);
+        return { firstName, lastName, username };
     }
 }
