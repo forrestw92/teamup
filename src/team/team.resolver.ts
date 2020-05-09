@@ -16,6 +16,7 @@ import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { Team } from './team.entity';
 import { TeamMemberType } from './team-member.type';
+import { JoinTeamInput } from './join-team.input';
 
 @Resolver(of => TeamType)
 @UseGuards(JwtAuthGuard)
@@ -33,6 +34,14 @@ export class TeamResolver {
         return this.teamService.createTeam(createTeamInput, user);
     }
 
+    @Mutation(type => TeamType)
+    joinTeam(
+        @Args('joinTeamInput') joinTeamInput: JoinTeamInput,
+        @GetUser() user: User,
+    ) {
+        return this.teamService.joinTeam(joinTeamInput, user);
+    }
+
     @Query(type => TeamType)
     team(@Args('teamId') teamId: string) {
         return this.teamService.getTeamById(teamId);
@@ -43,6 +52,18 @@ export class TeamResolver {
         return this.teamService.getAllTeams();
     }
 
+    @ResolveField()
+    async members(@Parent() team: Team): Promise<TeamMemberType[]> {
+        const users = await this.userService.getMany(team.members);
+        if (users.length > 0) {
+            return users.map(
+                ({ firstName, username, lastName }): TeamMemberType => {
+                    return { firstName, lastName, username };
+                },
+            );
+        }
+        return [];
+    }
     @ResolveField()
     async owner(@Parent() team: Team): Promise<TeamMemberType> {
         const {

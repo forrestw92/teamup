@@ -4,6 +4,8 @@ import { Team } from './team.entity';
 import { Repository } from 'typeorm';
 import { CreateTeamInput } from './team.input';
 import { v4 as uuid } from 'uuid';
+import { User } from '../user/user.entity';
+import { JoinTeamInput } from './join-team.input';
 @Injectable()
 export class TeamService {
     constructor(
@@ -23,7 +25,15 @@ export class TeamService {
             owner: user.id,
             createdAt: nowISO,
             updatedAt: nowISO,
+            members: [],
         });
+        return this.teamRepository.save(team);
+    }
+
+    async joinTeam(joinTeamInput: JoinTeamInput, user: User): Promise<Team> {
+        const { teamId } = joinTeamInput;
+        const team = await this.getTeamById(teamId);
+        team.members = [...team.members, user.id];
         return this.teamRepository.save(team);
     }
 

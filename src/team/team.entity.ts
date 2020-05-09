@@ -17,6 +17,9 @@ export class Team {
     owner: string;
 
     @Column()
+    members: string[];
+
+    @Column()
     createdAt: string;
 
     @Column()

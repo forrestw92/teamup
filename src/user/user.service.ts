@@ -40,4 +40,14 @@ export class UserService {
     async getUserById(userId: string) {
         return this.userRepository.findOne({ id: userId });
     }
+
+    async getMany(userIds: string[]): Promise<User[]> {
+        return this.userRepository.find({
+            where: {
+                id: {
+                    $in: userIds,
+                },
+            },
+        });
+    }
 }
