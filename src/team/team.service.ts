@@ -33,6 +33,10 @@ export class TeamService {
     async joinTeam(joinTeamInput: JoinTeamInput, user: User): Promise<Team> {
         const { teamId } = joinTeamInput;
         const team = await this.getTeamById(teamId);
+        const isOwner = team.owner === user.id;
+        if (isOwner) {
+            throw new BadRequestException('Not allowed to join own team.');
+        }
         team.members = [...team.members, user.id];
         return this.teamRepository.save(team);
     }
