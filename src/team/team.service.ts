@@ -34,6 +34,10 @@ export class TeamService {
         const { teamId } = joinTeamInput;
         const team = await this.getTeamById(teamId);
         const isOwner = team.owner === user.id;
+        const isMember = team.members.indexOf(user.id) > -1;
+        if (isMember) {
+            throw new BadRequestException('Already active team member.');
+        }
         if (isOwner) {
             throw new BadRequestException('Not allowed to join own team.');
         }
