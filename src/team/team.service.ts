@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './team.entity';
 import { Repository } from 'typeorm';
@@ -6,6 +10,7 @@ import { CreateTeamInput } from './team.input';
 import { v4 as uuid } from 'uuid';
 import { User } from '../user/user.entity';
 import { JoinTeamInput } from './join-team.input';
+import { DeleteTeamType } from './delete-team.type';
 @Injectable()
 export class TeamService {
     constructor(
@@ -44,7 +49,23 @@ export class TeamService {
         team.members = [...team.members, user.id];
         return this.teamRepository.save(team);
     }
+    async deleteTeam(teamId: string, user: User): Promise<DeleteTeamType> {
+        const team = await this.getTeamById(teamId);
+        const isOwner = team.owner === user.id;
 
+        if (!isOwner) {
+            throw new UnauthorizedException();
+        }
+
+        const result = await this.teamRepository.remove(team);
+
+        if (!result) {
+            throw new BadRequestException(
+                `Error deleting team with id ${teamId}`,
+            );
+        }
+        return { teamId };
+    }
     async getAllTeams(): Promise<Team[]> {
         return this.teamRepository.find();
     }

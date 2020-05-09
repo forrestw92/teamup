@@ -17,6 +17,7 @@ import { UserService } from '../user/user.service';
 import { Team } from './team.entity';
 import { TeamMemberType } from './team-member.type';
 import { JoinTeamInput } from './join-team.input';
+import { DeleteTeamType } from './delete-team.type';
 
 @Resolver(of => TeamType)
 @UseGuards(JwtAuthGuard)
@@ -40,6 +41,11 @@ export class TeamResolver {
         @GetUser() user: User,
     ) {
         return this.teamService.joinTeam(joinTeamInput, user);
+    }
+
+    @Mutation(type => DeleteTeamType)
+    deleteTeam(@Args('teamId') teamId: string, @GetUser() user: User) {
+        return this.teamService.deleteTeam(teamId, user);
     }
 
     @Query(type => TeamType)
