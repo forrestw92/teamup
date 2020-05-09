@@ -49,7 +49,11 @@ export class TeamService {
         return this.teamRepository.find();
     }
     async getTeamById(teamId: string): Promise<Team> {
-        return this.teamRepository.findOne({ id: teamId });
+        const team = await this.teamRepository.findOne({ id: teamId });
+        if (!team) {
+            throw new BadRequestException('Team id is not valid');
+        }
+        return team;
     }
 
     async getTeamByOwnerId(ownerId: string): Promise<Team> {
