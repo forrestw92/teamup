@@ -88,6 +88,28 @@ export class TeamService {
         return this.teamRepository.save(team);
     }
 
+    async leaveTeam(user: User): Promise<Team> {
+        const team = await this.teamRepository.findOne({
+            where: {
+                members: {
+                    $in: [user.id],
+                },
+            },
+        });
+        const isOwner = team.owner === user.id;
+
+        if (isOwner) {
+            throw new BadRequestException('Cant leave team you created.');
+        }
+
+        if (!team) {
+            throw new BadRequestException('You have not joined any team.');
+        }
+        team.members = team.members.filter(id => id !== user.id);
+
+        return this.teamRepository.save(team);
+    }
+
     async getAllTeams(): Promise<Team[]> {
         return this.teamRepository.find();
     }

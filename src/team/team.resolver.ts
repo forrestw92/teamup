@@ -53,6 +53,11 @@ export class TeamResolver {
         return this.teamService.removeMember(memberId, user);
     }
 
+    @Mutation(type => TeamType)
+    leaveTeam(@GetUser() user: User) {
+        return this.teamService.leaveTeam(user);
+    }
+
     @Query(type => TeamType)
     team(@Args('teamId') teamId: string) {
         return this.teamService.getTeamById(teamId);
