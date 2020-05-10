@@ -7,12 +7,14 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import databaseConfig from './config/database.config';
+import jwtConfig from './config/jwt.config';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             envFilePath: ['.env.development', '.env.production'],
-            load: [databaseConfig],
+            load: [databaseConfig, jwtConfig],
+            isGlobal: true,
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
