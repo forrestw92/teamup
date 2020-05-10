@@ -47,6 +47,7 @@ export class TeamService {
             throw new BadRequestException('Not allowed to join own team.');
         }
         team.members = [...team.members, user.id];
+        team.updatedAt = new Date().toISOString();
         return this.teamRepository.save(team);
     }
     async deleteTeam(teamId: string, user: User): Promise<DeleteTeamType> {
@@ -85,6 +86,7 @@ export class TeamService {
         }
 
         team.members = team.members.filter(id => id !== memberId);
+        team.updatedAt = new Date().toISOString();
         return this.teamRepository.save(team);
     }
 
@@ -106,7 +108,7 @@ export class TeamService {
             throw new BadRequestException('You have not joined any team.');
         }
         team.members = team.members.filter(id => id !== user.id);
-
+        team.updatedAt = new Date().toISOString();
         return this.teamRepository.save(team);
     }
 
